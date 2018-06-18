@@ -1,4 +1,4 @@
-- Caso atualize a model do EF, por favor, insira o cÛdigo abaixo dentro do construtor da classe Model.Context.cs:
+- Caso atualize a model do EF, por favor, insira o c√≥digo abaixo, dentro do construtor da classe Model.Context.cs:
 this.Configuration.ProxyCreationEnabled = false;
 this.Configuration.LazyLoadingEnabled = false;
-- Ser· necess·rio ajustar o webconfig com as configuraÁıes de acesso do banco de dados que utilizar.
+- Ser√° necess√°rio ajustar o webconfig com as configura√ß√µes de acesso do banco de dados que utilizar.
