@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="LojaModelStoreContainer" CdmEntityContainer="LojaEntities">
+    <FunctionImportMapping FunctionImportName="SP_LOJA_SEL_PEDIDOS" FunctionName="LojaModel.Store.SP_LOJA_SEL_PEDIDOS">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="LojaModel.SP_LOJA_SEL_PEDIDOS_Result">
+          <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
+          <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
+          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <EntitySetMapping Name="Clientes">
+      <EntityTypeMapping TypeName="LojaModel.Clientes">
+        <MappingFragment StoreEntitySet="Clientes">
+          <ScalarProperty Name="NR_CPF" ColumnName="NR_CPF" />
+          <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
+          <ScalarProperty Name="ID_Cliente" ColumnName="ID_Cliente" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ItensPedidos">
+      <EntityTypeMapping TypeName="LojaModel.ItensPedidos">
+        <MappingFragment StoreEntitySet="ItensPedidos">
+          <ScalarProperty Name="NR_ValorTotal" ColumnName="NR_ValorTotal" />
+          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+          <ScalarProperty Name="NR_Quantidade" ColumnName="NR_Quantidade" />
+          <ScalarProperty Name="ID_Produto" ColumnName="ID_Produto" />
+          <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
+          <ScalarProperty Name="ID_ItensPedido" ColumnName="ID_ItensPedido" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Pedidos">
+      <EntityTypeMapping TypeName="LojaModel.Pedidos">
+        <MappingFragment StoreEntitySet="Pedidos">
+          <ScalarProperty Name="DT_Entrega" ColumnName="DT_Entrega" />
+          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+          <ScalarProperty Name="ID_Cliente" ColumnName="ID_Cliente" />
+          <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Produtos">
+      <EntityTypeMapping TypeName="LojaModel.Produtos">
+        <MappingFragment StoreEntitySet="Produtos">
+          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+          <ScalarProperty Name="NM_Descricao" ColumnName="NM_Descricao" />
+          <ScalarProperty Name="ID_Produto" ColumnName="ID_Produto" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,195 @@
+﻿@{
+    ViewBag.Title = "Consulta de Pedido de Vendas";
+}
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <fieldset>
+            <legend>Consulta de Pedido de Vendas</legend>
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    @Html.Label("Cliente")
+                    <select id="ID_Cliente" name="ID_Cliente" class="sel-2-cliente form-control col-md-12"></select>
+                </div>
+                <div class="col-md-2">
+                    @Html.Label("Número")
+                    <input id="NR_Pedido" type="text" name="NR_Pedido" class="form-control" maxlength="4" />
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-4" style="text-align: center;">
+                    @Html.Label("", "Período de Entrega")
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group row justify-content-center">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group date" id="DT_EntregaInicialDiv" data-target-input="nearest">
+                                    <input id="DT_EntregaInicial" type="text" class="form-control datetimepicker-input" data-target="#DT_EntregaInicialDiv" maxlength="10" />
+                                    <div class="input-group-append" data-target="#DT_EntregaInicialDiv" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="text-align: center;">
+                            @Html.Label("até")
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group date" id="DT_EntregaFinalDiv" data-target-input="nearest">
+                                    <input id="DT_EntregaFinal" type="text" class="form-control datetimepicker-input" data-target="#DT_EntregaFinalDiv" maxlength="10" />
+                                    <div class="input-group-append" data-target="#DT_EntregaFinalDiv" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <button id="btnPesquisar" class="btn btn-outline-success col-xs-12 col-sm-12 col-md-12 col-lg-4" style="float: right;"><i class="fas fa-search"></i> Pesquisar</button>
+                    <button id="btnCadastrar" class="btn btn-outline-info col-xs-12 col-sm-12 col-md-12 col-lg-4" style="float: left; margin-right: 20px;"><i class="fas fa-dolly"></i> Cadastrar Pedido</button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div class="row justify-content-center" style="margin-top: 20px;">
+    <div id="divConsultaPedidos" class="col-md-8">
+        <div class="col-md-12">
+            <table id="gridConsultaPedidos" class="flexigrid">
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+@Html.Partial("../Shared/_Loading")
+@section scripts{
+<script>
+        $(document).ready(function () {
+            $('#DT_EntregaInicialDiv').datetimepicker({
+                locale: 'pt-br',
+                format: 'L'
+            });
+            $('#DT_EntregaInicial').mask("00/00/0000");
+            $('#DT_EntregaFinalDiv').datetimepicker({
+                locale: 'pt-br',
+                format: 'L'
+            });
+            $('#DT_EntregaFinal').mask("00/00/0000");
+            $("#NR_Pedido").mask("0000");
+            $("#ID_Cliente").focus();
+            $("#gridConsultaPedidos").flexigrid({
+                url: "@Url.Action("FiltraPedidos", "Home", new { area = "" })",                
+                dataType: "json",                
+                colModel: [
+                    { display: "Número", name: "_ID_Pedido", width: 230, sortable: true, align: "left" },
+                    { display: "Cliente", name: "_NM_Cliente", width: 230, sortable: true, align: "left" },
+                    { display: "Valor Total", name: "_NR_Valor", width: 233, sortable: true, align: "right" }
+                ],
+                buttons: [],
+                sortname: "",
+                sortorder: "desc",
+                cache: false,
+                singleSelect: true,
+                usepager: true,
+                title: "Resultado",
+                useRp: true,
+                rp: 10,
+                showTableToggleBtn: false,
+                height: 280
+            });
+        });
+
+        function filtraPedidos() {
+            var obj = {
+                ID_Cliente: $("#ID_Cliente").val() == null ? "0" : $("#ID_Cliente").val(),
+                NR_Pedido: $("#NR_Pedido").val() === "" ? "0" : $("#NR_Pedido").val(),
+                DT_EntregaInicial: $("#DT_EntregaInicial").val(),
+                DT_EntregaFinal: $("#DT_EntregaFinal").val()
+            };
+            $("#gridConsultaPedidos").flexOptions({ page: 1, newp: 1, query: JSON.stringify(obj) }).flexReload();
+        }
+
+        $("#btnCadastrar").on("click", function () {
+            $("#container-loading").show();
+            window.location.href = "@Url.Action("Pedido", "Home", new { area = "" })";
+        });
+
+        $("#btnPesquisar").on("click", function () {
+            var v = validaCampos();
+            if (v !== "") {
+                swal("Erro", v, "error");
+                return false;
+            }
+            filtraPedidos();            
+        });
+
+        function validaCampos() {
+            var retorno = "";
+            var dtIni = $("#DT_EntregaInicial").val();
+            var dtFim = $("#DT_EntregaFinal").val();
+
+            if (dtIni !== "" && dtFim === "") {
+                retorno += "Por favor, insira uma data de entrega final.";
+            } else if (dtIni !== "" && dtFim !== "" && moment(dtIni, 'DD/MM/YYYY').isAfter(moment(dtFim, 'DD/MM/YYYY'))) {
+                retorno += "Data de entrega final não pode ser menor do que a data de entrega inicial.";
+            }
+
+            return retorno;
+        }
+
+        $(".sel-2-cliente").select2({
+            ajax: {
+                url: "@ViewBag.URL_CLIENTES",
+                dataType: "json",
+                type: "GET",
+                delay: 100,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: $.map(data, function (obj) {
+                            obj.id = obj.ID_Cliente;
+                            return obj;
+                        }),
+                        pagination: {
+                            more: (params.page * 30) < data.length
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Pesquise um cliente',
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 1,
+            templateResult: formatRepoCliente,
+            templateSelection: formatRepoSelectionCliente,
+            allowClear: true
+        });
+
+        function formatRepoCliente(repo) {
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            var markup = "<div class='select2-result-repository clearfix'><div class='select2-result-repository__meta'>";
+            markup += `<div class='select2-result-repository__title'>${repo.NM_Cliente}</div>`;
+            markup += `<div class='select2-result-repository__description'>${repo.NR_CPF}</div>`;
+            markup += "</div></div>";
+
+            return markup;
+        }
+
+        function formatRepoSelectionCliente(repo) {
+            return repo.NM_Cliente;
+        }
+</script>
+}

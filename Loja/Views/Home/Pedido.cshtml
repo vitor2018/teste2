@@ -1,0 +1,270 @@
+﻿@{
+    ViewBag.Title = "Consulta de Pedido de Vendas";
+}
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <fieldset>
+            <legend>Pedido de Vendas</legend>
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-5">
+                    @Html.Label("Cliente")                    
+                    <select id="ID_Cliente" name="ID_Cliente" class="sel-2-cliente form-control col-md-12" data-bind="value: ID_Cliente"></select>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-7 col-lg-2">
+                    @Html.Label("Data Entrega")
+                    <div class="form-group">
+                        <div class="input-group date" id="DT_EntregaDiv" data-target-input="nearest">
+                            <input id="DT_Entrega" type="text" class="form-control datetimepicker-input" data-target="#DT_EntregaDiv" maxlength="10" data-bind="value: DT_Entrega" />
+                            <div class="input-group-append" data-target="#DT_EntregaDiv" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <fieldset>
+                        <legend>Itens do Pedido</legend>
+                        <div class="row justify-content-center">
+                            <div class="col-md-7 col-lg-3">
+                                @Html.Label("Produto")                                
+                                <select id="ID_Produto" name="ID_Produto" class="sel-2-produto form-control col-md-12"></select>
+                            </div>
+                            <div class="col-md-7 col-lg-2">
+                                @Html.Label("Quantidade")
+                                <input id="NR_Quantidade" type="text" name="NR_Quantidade" class="form-control" maxlength="5" />
+                            </div>
+                            <div class="col-md-7 col-lg-2">
+                                <button id="btnAdicionar" class="btn btn-outline-info col-md-12" style="margin-top: 31px;" data-bind="click: addItem"><i class="fas fa-plus-circle"></i> Adicionar</button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" style="margin-top: 20px;">
+                            <div class="col-md-7" style="overflow: auto;">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Produto</th>
+                                            <th scope="col">Qtd.</th>
+                                            <th scope="col">Valor</th>
+                                            <th scope="col">Valor Total</th>
+                                            <th scope="col">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblItensPedido" data-bind="foreach: ItensPedidos">
+                                        <tr>
+                                            <th style="word-wrap: break-word; white-space: normal;" scope="row" data-bind="text: $data.NM_Produto"></th>
+                                            <td style="word-wrap: break-word; white-space: normal;" data-bind="text: $data.NR_Quantidade"></td>
+                                            <td style="word-wrap: break-word; white-space: normal;" data-bind="text: $data.NR_Valor"></td>
+                                            <td style="word-wrap: break-word; white-space: normal;" data-bind="text: $data.NR_ValorTotal"></td>
+                                            <td><a href="javascripts:void(0);" data-bind="click: $parent.removeItem"><i class="fas fa-trash"></i></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-7">
+                    <label id="txtValorTotal" style="float: right;" data-bind="text: NR_Valor"></label>@Html.Label("lblValorTotal", "Valor Total:", new { @style = "float: right; margin-right: 10px;" })
+                </div>
+            </div>
+            <div class="row justify-content-center" style="margin-top: 20px;">
+                <div class="col-md-2">
+                    <button id="btnVoltar" class="btn btn-outline-dark col-md-12"><i class="fas fa-arrow-left"></i> Voltar</button>
+                </div>
+                <div class="col-md-5">
+                    <button id="btnSalvar" class="btn btn-outline-success col-md-8" style="float: right;"><i class="far fa-save"></i> Salvar</button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div> 
+@Html.Partial("../Shared/_Loading")
+@section scripts{
+    <script src="~/ViewModel/pedido.js"></script>
+    <script>
+        var viewModelItem;
+        $(document).ready(function () {
+            $("#DT_EntregaDiv").datetimepicker({
+                locale: 'pt-br',
+                format: 'L'
+            });
+            $("#DT_Entrega").mask("00/00/0000");
+            $("#DT_Entrega").on("blur", function () {
+                if (moment($(this).val(), 'DD/MM/YYYY').isBefore(moment(new Date().getDate(), 'DD/MM/YYYY'))) {
+                    $(this).val("");
+                }
+            });
+            $("#NR_Quantidade").mask("000.00");
+            $("#ID_Cliente").focus();
+            
+            viewModelItem = new PedidoViewModel();
+            ko.applyBindings(viewModelItem);
+        });
+
+        $("#btnVoltar").on("click", function () {
+            $("#container-loading").show();
+            window.location.href = "@Url.Action("Consulta", "Home", new { area = "" })";
+        });
+
+        $("#btnSalvar").on("click", function () {
+            $("#container-loading").show();
+            var v = validaCampos();
+            if (v !== "") {
+                $("#container-loading").hide();
+                swal("Erro", v, "error");
+                return false;
+            }            
+            $.ajax({
+                url: "@ViewBag.URL_PEDIDOS_CREATE",
+                type: "POST",
+                dataType: "json",
+                contentType: 'application/json',
+                data: ko.toJSON(viewModelItem),
+                success: function (data) {                    
+                    swal("Sucesso", "Cadastro realizado com sucesso!", "success").then(value => {
+                        switch (value) {
+                            default:
+                                window.location.href = "@Url.Action("Consulta", "Home", new { area = "" })";
+                        }
+                    });
+                    $("#container-loading").hide();
+                },
+                error: function (err) {                    
+                    $("#container-loading").hide();
+                    swal("Erro", err.statusText, "error");
+                }
+            });
+        });
+
+        function validaCampos() {
+            var retorno = "";
+            var data = $("#DT_Entrega").val();            
+
+            if (data === "") {
+                retorno = "Por favor, insira uma data de entrega.";
+            }
+            if (viewModelItem.ItensPedidos().length === 0) {
+                retorno += "\nPor favor, adicione ao menos um item.";
+            }
+
+            return retorno;
+        }
+
+        $(".sel-2-cliente").select2({
+            ajax: {
+                url: "@ViewBag.URL_CLIENTES",
+                dataType: "json",
+                type: "GET",
+                delay: 100,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {                    
+                    params.page = params.page || 1;
+                    
+                    return {
+                        results: $.map(data, function (obj) {
+                            obj.id = obj.ID_Cliente;
+                            return obj;
+                        }),
+                        pagination: {
+                            more: (params.page * 30) < data.length
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Pesquise um cliente',
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 1,
+            templateResult: formatRepoCliente,
+            templateSelection: formatRepoSelectionCliente,
+            allowClear: true
+        });
+
+        function formatRepoCliente(repo) {            
+            if (repo.loading) {
+                return repo.text;
+            }            
+            
+            var markup = "<div class='select2-result-repository clearfix'><div class='select2-result-repository__meta'>";
+            markup += `<div class='select2-result-repository__title'>${repo.NM_Cliente}</div>`;
+            markup += `<div class='select2-result-repository__description'>${repo.NR_CPF}</div>`;
+            markup += "</div></div>";
+
+            return markup;
+        }
+
+        function formatRepoSelectionCliente(repo) {
+            return repo.NM_Cliente || repo.text;
+        }
+
+        $(".sel-2-produto").select2({
+            ajax: {
+                url: "@ViewBag.URL_PRODUTOS",
+                dataType: 'json',
+                type: "GET",
+                delay: 100,                
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: $.map(data, function (obj) {
+                            obj.id = obj.ID_Produto;
+                            return obj;
+                        }),
+                        pagination: {
+                            more: (params.page * 30) < data.length
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Pesquise um produto',
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 1,
+            templateResult: formatRepoProduto,
+            templateSelection: formatRepoSelectionProduto,
+            allowClear: true
+        });
+
+        function formatRepoProduto(repo) {
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            var markup = "<div class='select2-result-repository clearfix'><div class='select2-result-repository__meta'>";
+            markup += `<div class='select2-result-repository__title'>${repo.NM_Descricao}</div>`;
+            markup += `<div class='select2-result-repository__description'>${repo.NR_Valor}</div>`;
+            markup += "</div></div>";
+
+            return markup;
+        }
+
+        function formatRepoSelectionProduto(repo) {
+            return repo.NM_Descricao;
+        }
+
+        function validaCamposItem(array, id) {            
+            var retorno = "";            
+            if ($("#ID_Produto").val() == null || $("#ID_Produto").val() === "" || $("#NR_Quantidade").val() == null || $("#NR_Quantidade").val() === "") {
+                retorno = "Por favor, selecione um produto e insira a quantidade.";
+            } else if (array.find(function (item) { return item.ID_Produto === id })) {
+                retorno = "Esse produto já foi selecionado.";
+            }
+            return retorno;
+        }
+    </script>
+}

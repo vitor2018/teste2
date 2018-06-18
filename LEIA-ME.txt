@@ -1,0 +1,4 @@
+- Caso atualize a model do EF, por favor, insira o código abaixo dentro do construtor da classe Model.Context.cs:
+this.Configuration.ProxyCreationEnabled = false;
+this.Configuration.LazyLoadingEnabled = false;
+- Será necessário ajustar o webconfig com as configurações de acesso do banco de dados que utilizar.
