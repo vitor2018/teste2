@@ -20,8 +20,8 @@ namespace API.Models
         public LojaEntities()
             : base("name=LojaEntities")
         {
-            this.Configuration.ProxyCreationEnabled = false;
             this.Configuration.LazyLoadingEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace API.Models
         public virtual DbSet<Pedidos> Pedidos { get; set; }
         public virtual DbSet<Produtos> Produtos { get; set; }
     
-        public virtual ObjectResult<SP_LOJA_SEL_PEDIDOS_Result> SP_LOJA_SEL_PEDIDOS(Nullable<int> iD_Cliente, Nullable<int> nR_Pedido, Nullable<System.DateTime> dT_EntregaInicial, Nullable<System.DateTime> dT_EntregaFinal)
+        public virtual ObjectResult<SP_LOJA_SEL_PEDIDOS_Result> SP_LOJA_SEL_PEDIDOS(Nullable<int> iD_Cliente, Nullable<int> nR_Pedido, string dT_EntregaInicial, string dT_EntregaFinal)
         {
             var iD_ClienteParameter = iD_Cliente.HasValue ?
                 new ObjectParameter("ID_Cliente", iD_Cliente) :
@@ -44,13 +44,13 @@ namespace API.Models
                 new ObjectParameter("NR_Pedido", nR_Pedido) :
                 new ObjectParameter("NR_Pedido", typeof(int));
     
-            var dT_EntregaInicialParameter = dT_EntregaInicial.HasValue ?
+            var dT_EntregaInicialParameter = dT_EntregaInicial != null ?
                 new ObjectParameter("DT_EntregaInicial", dT_EntregaInicial) :
-                new ObjectParameter("DT_EntregaInicial", typeof(System.DateTime));
+                new ObjectParameter("DT_EntregaInicial", typeof(string));
     
-            var dT_EntregaFinalParameter = dT_EntregaFinal.HasValue ?
+            var dT_EntregaFinalParameter = dT_EntregaFinal != null ?
                 new ObjectParameter("DT_EntregaFinal", dT_EntregaFinal) :
-                new ObjectParameter("DT_EntregaFinal", typeof(System.DateTime));
+                new ObjectParameter("DT_EntregaFinal", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_LOJA_SEL_PEDIDOS_Result>("SP_LOJA_SEL_PEDIDOS", iD_ClienteParameter, nR_PedidoParameter, dT_EntregaInicialParameter, dT_EntregaFinalParameter);
         }

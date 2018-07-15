@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="LojaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="LojaEntities" annotation:LazyLoadingEnabled="true">
-    <FunctionImport Name="SP_LOJA_SEL_PEDIDOS" ReturnType="Collection(LojaModel.SP_LOJA_SEL_PEDIDOS_Result)">
-      <Parameter Name="ID_Cliente" Mode="In" Type="Int32" />
-      <Parameter Name="NR_Pedido" Mode="In" Type="Int32" />
-      <Parameter Name="DT_EntregaInicial" Mode="In" Type="DateTime" />
-      <Parameter Name="DT_EntregaFinal" Mode="In" Type="DateTime" />
-    </FunctionImport>
     <EntitySet Name="Clientes" EntityType="LojaModel.Clientes" />
     <EntitySet Name="ItensPedidos" EntityType="LojaModel.ItensPedidos" />
     <EntitySet Name="Pedidos" EntityType="LojaModel.Pedidos" />
@@ -23,12 +17,13 @@
       <End Role="Produtos" EntitySet="Produtos" />
       <End Role="ItensPedidos" EntitySet="ItensPedidos" />
     </AssociationSet>
+    <FunctionImport Name="SP_LOJA_SEL_PEDIDOS" ReturnType="Collection(LojaModel.SP_LOJA_SEL_PEDIDOS_Result)">
+      <Parameter Name="ID_Cliente" Mode="In" Type="Int32" />
+      <Parameter Name="NR_Pedido" Mode="In" Type="Int32" />
+      <Parameter Name="DT_EntregaInicial" Mode="In" Type="String" />
+      <Parameter Name="DT_EntregaFinal" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
-  <ComplexType Name="SP_LOJA_SEL_PEDIDOS_Result">
-    <Property Type="Int32" Name="ID_Pedido" Nullable="false" />
-    <Property Type="String" Name="NM_Cliente" Nullable="false" MaxLength="150" />
-    <Property Type="Decimal" Name="NR_Valor" Nullable="false" Precision="24" Scale="12" />
-  </ComplexType>
   <EntityType Name="Clientes">
     <Key>
       <PropertyRef Name="ID_Cliente" />
@@ -58,7 +53,7 @@
     <Property Name="ID_Pedido" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="ID_Cliente" Type="Int32" />
     <Property Name="NR_Valor" Type="Decimal" Nullable="false" Precision="16" Scale="2" />
-    <Property Name="DT_Entrega" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="DT_Entrega" Type="DateTime" Nullable="false" Precision="3" />
     <NavigationProperty Name="Clientes" Relationship="LojaModel.FK_Pedidos_Clientes" FromRole="Pedidos" ToRole="Clientes" />
     <NavigationProperty Name="ItensPedidos" Relationship="LojaModel.FK_ItensPedidos_Pedidos" FromRole="Pedidos" ToRole="ItensPedidos" />
   </EntityType>
@@ -107,4 +102,9 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <ComplexType Name="SP_LOJA_SEL_PEDIDOS_Result">
+    <Property Type="Int32" Name="ID_Pedido" Nullable="false" />
+    <Property Type="String" Name="NM_Cliente" Nullable="true" MaxLength="150" />
+    <Property Type="Decimal" Name="NR_Valor" Nullable="false" Precision="16" Scale="2" />
+  </ComplexType>
 </Schema>

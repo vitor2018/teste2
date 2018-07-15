@@ -31,7 +31,7 @@
           <Property Name="ID_Pedido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ID_Cliente" Type="int" />
           <Property Name="NR_Valor" Type="decimal" Precision="16" Scale="2" Nullable="false" />
-          <Property Name="DT_Entrega" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="DT_Entrega" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Produtos">
           <Key>
@@ -80,8 +80,8 @@
         <Function Name="SP_LOJA_SEL_PEDIDOS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID_Cliente" Type="int" Mode="In" />
           <Parameter Name="NR_Pedido" Type="int" Mode="In" />
-          <Parameter Name="DT_EntregaInicial" Type="datetime" Mode="In" />
-          <Parameter Name="DT_EntregaFinal" Type="datetime" Mode="In" />
+          <Parameter Name="DT_EntregaInicial" Type="char" Mode="In" />
+          <Parameter Name="DT_EntregaFinal" Type="char" Mode="In" />
         </Function>
         <EntityContainer Name="LojaModelStoreContainer">
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
@@ -106,12 +106,6 @@
     <edmx:ConceptualModels>
       <Schema Namespace="LojaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="LojaEntities" annotation:LazyLoadingEnabled="true">
-          <FunctionImport Name="SP_LOJA_SEL_PEDIDOS" ReturnType="Collection(LojaModel.SP_LOJA_SEL_PEDIDOS_Result)">
-            <Parameter Name="ID_Cliente" Mode="In" Type="Int32" />
-            <Parameter Name="NR_Pedido" Mode="In" Type="Int32" />
-            <Parameter Name="DT_EntregaInicial" Mode="In" Type="DateTime" />
-            <Parameter Name="DT_EntregaFinal" Mode="In" Type="DateTime" />
-          </FunctionImport>
           <EntitySet Name="Clientes" EntityType="LojaModel.Clientes" />
           <EntitySet Name="ItensPedidos" EntityType="LojaModel.ItensPedidos" />
           <EntitySet Name="Pedidos" EntityType="LojaModel.Pedidos" />
@@ -128,12 +122,13 @@
             <End Role="Produtos" EntitySet="Produtos" />
             <End Role="ItensPedidos" EntitySet="ItensPedidos" />
           </AssociationSet>
+          <FunctionImport Name="SP_LOJA_SEL_PEDIDOS" ReturnType="Collection(LojaModel.SP_LOJA_SEL_PEDIDOS_Result)">
+            <Parameter Name="ID_Cliente" Mode="In" Type="Int32" />
+            <Parameter Name="NR_Pedido" Mode="In" Type="Int32" />
+            <Parameter Name="DT_EntregaInicial" Mode="In" Type="String" />
+            <Parameter Name="DT_EntregaFinal" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
-        <ComplexType Name="SP_LOJA_SEL_PEDIDOS_Result">
-          <Property Type="Int32" Name="ID_Pedido" Nullable="false" />
-          <Property Type="String" Name="NM_Cliente" Nullable="false" MaxLength="150" />
-          <Property Type="Decimal" Name="NR_Valor" Nullable="false" Precision="24" Scale="12" />
-        </ComplexType>
         <EntityType Name="Clientes">
           <Key>
             <PropertyRef Name="ID_Cliente" />
@@ -163,7 +158,7 @@
           <Property Name="ID_Pedido" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ID_Cliente" Type="Int32" />
           <Property Name="NR_Valor" Type="Decimal" Nullable="false" Precision="16" Scale="2" />
-          <Property Name="DT_Entrega" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="DT_Entrega" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Clientes" Relationship="LojaModel.FK_Pedidos_Clientes" FromRole="Pedidos" ToRole="Clientes" />
           <NavigationProperty Name="ItensPedidos" Relationship="LojaModel.FK_ItensPedidos_Pedidos" FromRole="Pedidos" ToRole="ItensPedidos" />
         </EntityType>
@@ -212,21 +207,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SP_LOJA_SEL_PEDIDOS_Result">
+          <Property Type="Int32" Name="ID_Pedido" Nullable="false" />
+          <Property Type="String" Name="NM_Cliente" Nullable="true" MaxLength="150" />
+          <Property Type="Decimal" Name="NR_Valor" Nullable="false" Precision="16" Scale="2" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="LojaModelStoreContainer" CdmEntityContainer="LojaEntities">
-          <FunctionImportMapping FunctionImportName="SP_LOJA_SEL_PEDIDOS" FunctionName="LojaModel.Store.SP_LOJA_SEL_PEDIDOS">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="LojaModel.SP_LOJA_SEL_PEDIDOS_Result">
-                <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
-                <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
-                <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="LojaModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
@@ -267,6 +258,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_LOJA_SEL_PEDIDOS" FunctionName="LojaModel.Store.SP_LOJA_SEL_PEDIDOS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LojaModel.SP_LOJA_SEL_PEDIDOS_Result">
+                <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
+                <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
+                <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

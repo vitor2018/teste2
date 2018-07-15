@@ -26,7 +26,7 @@
     <Property Name="ID_Pedido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ID_Cliente" Type="int" />
     <Property Name="NR_Valor" Type="decimal" Precision="16" Scale="2" Nullable="false" />
-    <Property Name="DT_Entrega" Type="varchar" MaxLength="10" Nullable="false" />
+    <Property Name="DT_Entrega" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Produtos">
     <Key>
@@ -75,8 +75,8 @@
   <Function Name="SP_LOJA_SEL_PEDIDOS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="ID_Cliente" Type="int" Mode="In" />
     <Parameter Name="NR_Pedido" Type="int" Mode="In" />
-    <Parameter Name="DT_EntregaInicial" Type="datetime" Mode="In" />
-    <Parameter Name="DT_EntregaFinal" Type="datetime" Mode="In" />
+    <Parameter Name="DT_EntregaInicial" Type="char" Mode="In" />
+    <Parameter Name="DT_EntregaFinal" Type="char" Mode="In" />
   </Function>
   <EntityContainer Name="LojaModelStoreContainer">
     <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />

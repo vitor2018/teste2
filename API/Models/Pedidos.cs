@@ -23,7 +23,7 @@ namespace API.Models
         public int ID_Pedido { get; set; }
         public Nullable<int> ID_Cliente { get; set; }
         public decimal NR_Valor { get; set; }
-        public string DT_Entrega { get; set; }
+        public System.DateTime DT_Entrega { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

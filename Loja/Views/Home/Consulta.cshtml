@@ -107,9 +107,9 @@
             var obj = {
                 ID_Cliente: $("#ID_Cliente").val() == null ? "0" : $("#ID_Cliente").val(),
                 NR_Pedido: $("#NR_Pedido").val() === "" ? "0" : $("#NR_Pedido").val(),
-                DT_EntregaInicial: $("#DT_EntregaInicial").val(),
-                DT_EntregaFinal: $("#DT_EntregaFinal").val()
-            };
+                DT_EntregaInicial: moment($("#DT_EntregaInicial").val(), 'DD-MM-YYYY').toDate(),
+                DT_EntregaFinal: moment($("#DT_EntregaFinal").val(), 'DD-MM-YYYY').toDate()
+            };            
             $("#gridConsultaPedidos").flexOptions({ page: 1, newp: 1, query: JSON.stringify(obj) }).flexReload();
         }
 

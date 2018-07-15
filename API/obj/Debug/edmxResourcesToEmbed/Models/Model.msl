@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="LojaModelStoreContainer" CdmEntityContainer="LojaEntities">
-    <FunctionImportMapping FunctionImportName="SP_LOJA_SEL_PEDIDOS" FunctionName="LojaModel.Store.SP_LOJA_SEL_PEDIDOS">
-      <ResultMapping>
-        <ComplexTypeMapping TypeName="LojaModel.SP_LOJA_SEL_PEDIDOS_Result">
-          <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
-          <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
-          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
-        </ComplexTypeMapping>
-      </ResultMapping>
-    </FunctionImportMapping>
     <EntitySetMapping Name="Clientes">
       <EntityTypeMapping TypeName="LojaModel.Clientes">
         <MappingFragment StoreEntitySet="Clientes">
@@ -50,5 +41,14 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="SP_LOJA_SEL_PEDIDOS" FunctionName="LojaModel.Store.SP_LOJA_SEL_PEDIDOS">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="LojaModel.SP_LOJA_SEL_PEDIDOS_Result">
+          <ScalarProperty Name="ID_Pedido" ColumnName="ID_Pedido" />
+          <ScalarProperty Name="NM_Cliente" ColumnName="NM_Cliente" />
+          <ScalarProperty Name="NR_Valor" ColumnName="NR_Valor" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
   </EntityContainerMapping>
 </Mapping>

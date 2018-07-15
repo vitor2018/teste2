@@ -113,11 +113,13 @@
         $("#btnSalvar").on("click", function () {
             $("#container-loading").show();
             var v = validaCampos();
+            var dataE = moment($("#DT_Entrega").val(), 'DD-MM-YYYY').toDate();
             if (v !== "") {
                 $("#container-loading").hide();
                 swal("Erro", v, "error");
                 return false;
             }            
+            viewModelItem.DT_Entrega(dataE);
             $.ajax({
                 url: "@ViewBag.URL_PEDIDOS_CREATE",
                 type: "POST",

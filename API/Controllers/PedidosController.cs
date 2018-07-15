@@ -24,9 +24,25 @@ namespace API.Controllers
             {
                 Parametros parametros = new Parametros("SP_LOJA_SEL_PEDIDOS");
                 parametros.Add("ID_Cliente", filtro?.ID_Cliente ?? 0);
-                parametros.Add("NR_Pedido", filtro?.NR_Pedido ?? 0);
-                parametros.Add("DT_EntregaInicial", filtro?.DT_EntregaFinal ?? "");
-                parametros.Add("DT_EntregaFinal", filtro?.DT_EntregaFinal ?? "");
+                parametros.Add("NR_Pedido", filtro?.NR_Pedido ?? 0);                
+                var dtInicial = filtro?.DT_EntregaInicial ?? null;
+                if (dtInicial != null && dtInicial != DateTime.MinValue)
+                {                    
+                    parametros.Add("DT_EntregaInicial", filtro.DT_EntregaInicial.ToShortDateString());
+                }
+                else
+                {
+                    parametros.Add("DT_EntregaInicial", "");
+                }
+                var dtFinal = filtro?.DT_EntregaFinal ?? null;
+                if (dtFinal != null && dtFinal != DateTime.MinValue)
+                {
+                    parametros.Add("DT_EntregaFinal", filtro.DT_EntregaFinal.ToShortDateString());
+                }
+                else
+                {
+                    parametros.Add("DT_EntregaFinal", "");                    
+                }                
                 return Ok(unitOfWork.Sp_Sel_Pedidos.Proc_Retorno(parametros.ToText(), parametros.GetParametros()).ToList());
             }
             catch (Exception)
